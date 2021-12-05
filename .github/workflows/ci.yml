@@ -51,13 +51,13 @@ jobs:
       - name: Build binary artiacts
         run: |
           cmake --build ${{ github.workspace }}/build --target package
-          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+          unzip ${{ github.workspace }}/build/Civitas-*.zip -d ${{ github.workspace }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: civitas-linux
-          path: "${{ github.workspace }}/civitas-*/**"
+          path: "${{ github.workspace }}/Civitas-*/**"
 
   macos:
     name: MacOS
@@ -82,13 +82,13 @@ jobs:
       - name: Build binary artiacts
         run: |
           cmake --build ${{ github.workspace }}/build --target package
-          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+          unzip ${{ github.workspace }}/build/Civitas-*.zip -d ${{ github.workspace }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: civitas-macos
-          path: "${{ github.workspace }}/civitas-*/**"
+          path: "${{ github.workspace }}/Civitas-*/**"
 
   wasm:
     name: WASM
@@ -112,7 +112,7 @@ jobs:
       - name: Configure CMake
         run: |
           emcc -v
-          emcmake cmake -B ${{ github.workspace }}/build -DCMAKE_CC_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          emcmake cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build Civitas
         run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
@@ -120,10 +120,10 @@ jobs:
       - name: Build binary artiacts
         run: |
           cmake --build ${{ github.workspace }}/build --target package
-          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+          unzip ${{ github.workspace }}/build/Civitas-*.zip -d ${{ github.workspace }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: civitas-web
-          path: "${{ github.workspace }}/civitas-*/**"
+          path: "${{ github.workspace }}/Civitas-*/**"
