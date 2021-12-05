@@ -51,7 +51,7 @@ endif()
 include(CMakeDependentOption)
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED LANGUAGES CXX)
-cmake_dependent_option(CIVITAS_IPO "Enable interprocedural optimization" ON
+cmake_dependent_option(IPO "Enable interprocedural optimization" ON
                        "IPO_SUPPORTED;CMAKE_BUILD_TYPE MATCHES Rel" OFF)
 
 find_program(CCACHE_EXECUTABLE NAMES "ccache")
@@ -63,6 +63,16 @@ find_program(CPPCHECK_EXECUTABLE NAMES "cppcheck")
 find_program(CLANG_TIDY_EXECUTABLE NAMES "clang-tidy")
 find_program(IWYU_EXECUTABLE NAMES "include-what-you-use")
 set(CMAKE_CXX_LINK_WHAT_YOU_USE ON)
+
+if(EMSCRIPTEN)
+  set(PLATFORM "Web")
+else()
+  set(PLATFORM
+      "Desktop"
+      CACHE STRING "Target platform to build for" FORCE)
+  set_property(CACHE PLATFORM PROPERTY STRINGS "Desktop" "Web" "Android"
+                                       "Raspberry Pi" "DRM")
+endif()
 
 # Fetch dependencies
 include(FetchContent)
@@ -106,7 +116,7 @@ set_package_properties(X11 PROPERTIES URL "https://www.x.org/wiki/")
 set_package_properties(OpenGL PROPERTIES URL "https://www.opengl.org/")
 set_package_properties(Git PROPERTIES URL "https://git-scm.com/")
 
-add_feature_info(IPO CIVITAS_IPO "Interprocedural Optimization")
+add_feature_info(IPO IPO "Interprocedural Optimization")
 
 feature_summary(INCLUDE_QUIET_PACKAGES QUIET_ON_EMPTY
                 WHAT PACKAGES_FOUND ENABLED_FEATURES DISABLED_FEATURES)

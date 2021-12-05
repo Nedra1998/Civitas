@@ -11,11 +11,13 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
 
-#if defined(_WIN32) || defined(_WIN64)
-#  include <io.h>
-#  include <windows.h>
-#elif defined(__APPLE__) || defined(__unix__) || defined(__unix)
-#  include <unistd.h>
+#ifdef PLATFORM_DESKTOP
+#  if defined(_WIN32) || defined(_WIN64)
+#    include <io.h>
+#    include <windows.h>
+#  elif defined(__APPLE__) || defined(__unix__) || defined(__unix)
+#    include <unistd.h>
+#  endif
 #endif
 
 namespace civitas::logging {
@@ -87,10 +89,14 @@ bool civitas::logging::setup() {
 
 #ifndef NDEBUG
     {
-#  if defined(_WIN32) || defined(_WIN64)
+#  ifdef PLATFORM_DESKTOP
+#    if defined(_WIN32) || defined(_WIN64)
       const bool use_color = _isatty(_fileno(stdout));
-#  elif defined(__APPLE__) || defined(__unix__) || defined(__unix)
+#    elif defined(__APPLE__) || defined(__unix__) || defined(__unix)
       const bool use_color = ::isatty(fileno(stdout)) != 0;
+#    else
+      const bool use_color = false;
+#    endif
 #  else
       const bool use_color = false;
 #  endif

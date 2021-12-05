@@ -12,16 +12,15 @@ add_executable(civitas ${SOURCES})
 target_compile_features(civitas PUBLIC cxx_std_17)
 
 # Configure target properties
-set_target_properties(civitas PROPERTIES INTERPROCEDURAL_OPTIMIZATION
-                                         ${CIVITAS_IPO})
-if(CPPCHECK_EXECUTABLE)
+set_target_properties(civitas PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${IPO})
+if(CPPCHECK_EXECUTABLE AND NOT PLATFORM STREQUAL "Web")
   set_target_properties(civitas PROPERTIES CXX_CPPCHECK ${CPPCHECK_EXECUTABLE})
 endif()
-if(CLANG_TIDY_EXECUTABLE)
+if(CLANG_TIDY_EXECUTABLE AND NOT PLATFORM STREQUAL "Web")
   set_target_properties(civitas PROPERTIES CXX_CLANG_TIDY
                                            ${CLANG_TIDY_EXECUTABLE})
 endif()
-if(IWYU_EXECUTABLE)
+if(IWYU_EXECUTABLE AND NOT PLATFORM STREQUAL "Web")
   set_target_properties(civitas PROPERTIES CXX_INCLUDE_WHAT_YOU_USE
                                            ${IWYU_EXECUTABLE})
 endif()
@@ -45,4 +44,4 @@ endif()
 
 # Additional compile time extensions
 include(EnableExtraCompilerWarnings)
-enable_extra_compiler_warnings(civitas)
+# enable_extra_compiler_warnings(civitas)
