@@ -124,7 +124,7 @@ bool civitas::logging::setup() {
               "logs/tinxi.log", 5 * 1024 * 1024, 5);
       new_sink->set_level(spdlog::level::trace);
       new_sink->set_pattern(
-          "[%Y-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] [%s:%#] <%t> %v");
+          "[%Y-%m-%d %H:%M:%S.%e] [%15!n] [%^%=7l%$] [%s:%#] %v");
       logging::sink->add_sink(new_sink);
     }
 

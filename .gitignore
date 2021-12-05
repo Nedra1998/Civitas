@@ -2,7 +2,10 @@
 # Build directories
 build/
 
-## GGshield
+# LSP cache
+.cache/
+
+# GGshield
 .cache_ggshield
 
 ### C++
