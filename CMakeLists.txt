@@ -38,6 +38,15 @@ if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   endif()
 endif()
 
+# Platform specific configuration
+if(EMSCRIPTEN)
+  set(CMAKE_C_FLAGS
+      "${CMAKE_C_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY")
+  set(CMAKE_CXX_FLAGS
+      "${CMAKE_CXX_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY")
+  set(CMAKE_EXECUTABLE_SUFFIX ".html")
+endif()
+
 # Project Options
 include(CMakeDependentOption)
 include(CheckIPOSupported)
@@ -76,13 +85,7 @@ FetchContent_Declare(
   GIT_TAG 4.0.0
   GIT_SHALLOW TRUE)
 
-set(SKIP_PERFORMANCE_COMPARISON ON)
-FetchContent_Declare(
-  cereal
-  GIT_REPOSITORY https://github.com/USCiLab/cereal
-  GIT_TAG master
-  GIT_SHALLOW TRUE)
-FetchContent_MakeAvailable(spdlog fmt raylib cereal)
+FetchContent_MakeAvailable(spdlog fmt raylib)
 
 # Targets
 add_subdirectory(src)

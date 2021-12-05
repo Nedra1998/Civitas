@@ -2,6 +2,9 @@
 # Build directories
 build/
 
+## GGshield
+.cache_ggshield
+
 ### C++
 # Prerequisites
 *.d
