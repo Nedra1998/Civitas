@@ -1,0 +1,156 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+defaults:
+  run:
+    shell: bash
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  lint-commit:
+    name: Lint Commit Message
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Lint Commit Messages
+        uses: wagoid/commitlint-github-action@v3
+        with:
+          configFile: .commitlint.js
+
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+      - name: Configure CMake
+        run: cmake -B ${{ github.workspace }}/build -DCMAKE_CC_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build Civitas
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
+
+      - name: Build binary artiacts
+        run: |
+          cmake --build ${{ github.workspace }}/build --target package
+          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: civitas-linux
+          path: '${{ github.workspace }}/civitas-*/**'
+
+  wasm:
+    name: WASM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v11
+        with:
+          actions-cache-folder: "emsdk-cache"
+
+      - name: Configure CMake
+        run: emcmake cmake -B ${{ github.workspace }}/build -DCMAKE_CC_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build Civitas
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
+
+      - name: Build binary artiacts
+        run: |
+          cmake --build ${{ github.workspace }}/build --target package
+          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: civitas-web
+          path: '${{ github.workspace }}/civitas-*/**'
+
+  macos:
+    name: MacOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+      - name: Configure CMake
+        run: cmake -B ${{ github.workspace }}/build -DCMAKE_CC_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build Civitas
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
+
+      - name: Build binary artiacts
+        run: |
+          cmake --build ${{ github.workspace }}/build --target package
+          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: civitas-macos
+          path: '${{ github.workspace }}/civitas-*/**'
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+      - name: Configure CMake
+        run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build Civitas
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)
+
+      - name: Build binary artiacts
+        run: |
+          cmake --build ${{ github.workspace }}/build --target package
+          unzip ${{ github.workspace }}/build/civitas-*.zip -d ${{ github.workspace }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: civitas-windows
+          path: '${{ github.workspace }}/civitas-*/**'
