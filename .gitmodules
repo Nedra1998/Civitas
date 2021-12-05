@@ -1,0 +1,12 @@
+[submodule "extern/spdlog"]
+	path = extern/spdlog
+	url = git@github.com:gabime/spdlog.git
+	shallow = true
+[submodule "extern/fmt"]
+	path = extern/fmt
+	url = git@github.com:fmtlib/fmt.git
+	shallow = true
+[submodule "extern/raylib"]
+	path = extern/raylib
+	url = git@github.com:raysan5/raylib.git
+	shallow = true

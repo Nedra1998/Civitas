@@ -112,7 +112,7 @@ jobs:
       - name: Configure CMake
         run: |
           emcc -v
-          emcmake cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          emcmake cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DPLATFORM=Web
 
       - name: Build Civitas
         run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }} --parallel $(nproc)

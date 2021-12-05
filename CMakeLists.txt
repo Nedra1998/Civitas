@@ -74,28 +74,8 @@ else()
                                        "Raspberry Pi" "DRM")
 endif()
 
-# Fetch dependencies
-include(FetchContent)
-
-FetchContent_Declare(
-  spdlog
-  GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG v1.9.2
-  GIT_SHALLOW TRUE)
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 8.0.1
-  GIT_SHALLOW TRUE)
-
-set(OpenGL_GL_PREFERENCE "GLVND")
-FetchContent_Declare(
-  raylib
-  GIT_REPOSITORY https://github.com/raysan5/raylib.git
-  GIT_TAG 4.0.0
-  GIT_SHALLOW TRUE)
-
-FetchContent_MakeAvailable(spdlog fmt raylib)
+# Build dependencies
+add_subdirectory(extern)
 
 # Targets
 add_subdirectory(src)

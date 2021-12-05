@@ -10,7 +10,12 @@ list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/include/version.hpp")
 # Declare executable target
 add_executable(civitas ${SOURCES})
 target_compile_features(civitas PUBLIC cxx_std_17)
+
 install(TARGETS civitas RUNTIME DESTINATION bin)
+if(PLATFORM STREQUAL "Web")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/civitas.js"
+                "${CMAKE_CURRENT_BINARY_DIR}/civitas.wasm" TYPE BIN)
+endif()
 
 # Configure target properties
 set_target_properties(civitas PROPERTIES INTERPROCEDURAL_OPTIMIZATION ${IPO})
