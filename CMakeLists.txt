@@ -100,6 +100,10 @@ FetchContent_MakeAvailable(spdlog fmt raylib)
 # Targets
 add_subdirectory(src)
 
+# Packaging
+set(CPACK_GENERATOR "TGZ" "ZIP")
+include(CPack)
+
 # Build feature summary
 include(FeatureSummary)
 set_package_properties(
