@@ -10,3 +10,6 @@
 	path = extern/raylib
 	url = git@github.com:raysan5/raylib.git
 	shallow = true
+[submodule "extern/raygui"]
+	path = extern/raygui
+	url = git@github.com:raysan5/raygui.git

@@ -36,7 +36,7 @@ target_include_directories(
   civitas
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
-target_link_libraries(civitas PUBLIC spdlog::spdlog fmt::fmt raylib)
+target_link_libraries(civitas PUBLIC spdlog::spdlog fmt::fmt raylib raygui)
 
 # Configure dependency compile type options
 target_compile_definitions(civitas PUBLIC -DSPDLOG_FMT_EXTERNAL)
