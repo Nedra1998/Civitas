@@ -35,15 +35,15 @@ public:
 
   MainLoop() {
     Image bg_img =
-        GenImageChecked(screenWidth + 128, screenHeight + 128, 32, 32,
+        GenImageChecked(screenWidth * 2 + 128, screenHeight * 2 + 128, 32, 32,
                         GetColor(0x2e222fff), GetColor(0x3e3546ff));
     bg_tex = LoadTextureFromImage(bg_img);
     UnloadImage(bg_img);
 
-    camera.target   = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+    camera.target   = (Vector2){0, 0};
     camera.offset   = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
     camera.rotation = 0.0f;
-    camera.zoom     = 1.0f;
+    camera.zoom     = 2.5f;
   }
 
   ~MainLoop() { UnloadTexture(bg_tex); }
@@ -57,30 +57,40 @@ public:
 
       UnloadTexture(bg_tex);
       Image bg_img =
-          GenImageChecked(screenWidth + 128, screenHeight + 128, 32, 32,
+          GenImageChecked(screenWidth * 2 + 128, screenHeight * 2 + 128, 32, 32,
                           GetColor(0x2e222fff), GetColor(0x3e3546ff));
       bg_tex = LoadTextureFromImage(bg_img);
     }
 
-    if (IsKeyDown(KEY_LEFT))
+    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
       camera.target.x -= speed * deltaTime;
-    if (IsKeyDown(KEY_RIGHT))
+    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))
       camera.target.x += speed * deltaTime;
-    if (IsKeyDown(KEY_UP))
+    if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))
       camera.target.y -= speed * deltaTime;
-    if (IsKeyDown(KEY_DOWN))
+    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))
       camera.target.y += speed * deltaTime;
+    if (IsKeyDown(KEY_E))
+      camera.zoom = std::min(5.0f, camera.zoom + (deltaTime));
+    if (IsKeyDown(KEY_Q))
+      camera.zoom = std::max(0.5f, camera.zoom - (deltaTime));
 
     BeginDrawing();
 
     ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-    DrawTexture(
-        bg_tex, static_cast<int>((screenWidth / 2) - camera.target.x) % 64 - 64,
-        static_cast<int>((screenHeight / 2) - camera.target.y) % 64 - 64,
-        Fade(WHITE, 1.0f));
 
     {
       BeginMode2D(camera);
+      int zero_x = camera.target.x - (screenWidth / 2.0f);
+      int zero_y = camera.target.y - (screenHeight / 2.0f);
+      DrawTexture(
+          bg_tex,
+          zero_x + static_cast<int>((screenWidth / 2) - camera.target.x) % 64 -
+              (screenWidth / 2 + 64),
+          zero_y + static_cast<int>((screenHeight / 2) - camera.target.y) % 64 -
+              (screenHeight / 2 + 64),
+          Fade(WHITE, 1.0f));
+      DrawCircle(0, 0, 5, GetColor(0xea4f36ff));
       DrawText("Congrats! You created your first window!", 190, 200, 20,
                LIGHTGRAY);
       EndMode2D();
@@ -164,14 +174,10 @@ int main(int argc, char *argv[]) {
 
   MainLoop main;
 
-#if defined(PLATFORM_WEB)
-  emscripten_set_main_loop([main]() { main.run(); }, 0, 1);
-#else
   SetTargetFPS(60);
   while (!WindowShouldClose()) {
     main.run();
   }
-#endif
 
   CloseWindow();
   return 0;
